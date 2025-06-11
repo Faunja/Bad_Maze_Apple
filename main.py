@@ -9,7 +9,6 @@ from event_handler import event_handler
 def main():
 	mixer.music.play()
 	while User.playing:
-		print(User.clock.get_fps())
 		User.clock.tick(User.FPS)
 		event_handler()
 		display_game()
