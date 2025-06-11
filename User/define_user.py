@@ -8,7 +8,6 @@ class define_User:
 		mixer.init()
 		mixer.music.load("bad_apple.wav")
 		mixer.music.set_volume(1)
-		mixer.music.play()
 		Display = pygame.display.get_desktop_sizes()
 		self.ScreenWidth = Display[0][0]
 		self.ScreenHeight = Display[0][1]
