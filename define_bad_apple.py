@@ -1,4 +1,8 @@
-import os, pickle, copy, time
+import pygame
+from pygame import mixer
+import os
+import pickle
+import copy
 from PIL import Image
 from define_maze import define_Maze
 from User.define_user import User
@@ -10,7 +14,7 @@ class define_Bad_Apple:
 		self.images = sorted(os.listdir(self.imageDirectory))
 		self.sequence = 0
 		self.referenceChange = 3
-		self.clusterSize = 20
+		self.clusterSize = 12
 		self.play()
 
 	def play(self):
@@ -19,9 +23,12 @@ class define_Bad_Apple:
 		if os.path.exists(fileName):
 			with open(fileName, 'rb') as file:
 				self.Maze = pickle.load(file)
+			if int(self.sequence / 30) - int(pygame.mixer.music.get_pos() / 1000) < 0:
+				self.sequence += 1
+			elif int(self.sequence / 30) - int(pygame.mixer.music.get_pos() / 1000) > 0:
+				self.sequence -= 1
 		else:
 			imageFile = Image.open(imagePath).convert('RGB')
-			pixelColors = imageFile.load()
 			width, height = imageFile.size
 			mazeWidth = int(width / self.clusterSize)
 			mazeHeight = int(height / self.clusterSize)
@@ -36,16 +43,20 @@ class define_Bad_Apple:
 						currentVariables[variable] = copy.deepcopy(referenceVariables[variable])
 					else:
 						currentVariables[variable] = referenceVariables[variable]
+			self.Maze
+			colors = []
+			for row in range(height):
+				colors.append([])
+				for column in range(width):
+					colors[row].append(None)
 			for mazeY in range(mazeHeight):
-				clusteryPosition = mazeY * self.clusterSize
 				for mazeX in range(mazeWidth):
-					clusterxPosition = mazeX * self.clusterSize
 					colorValue = [0, 0]
 					for y in range(self.clusterSize):
-						yPosition = y + clusteryPosition
+						yPosition = y + mazeY * self.clusterSize
 						for x in range(self.clusterSize):
-							xPosition = x + clusterxPosition
-							r, g, b = pixelColors[xPosition, yPosition]
+							xPosition = x + mazeX * self.clusterSize
+							r, g, b = imageFile.getpixel((xPosition, yPosition))
 							colorValue[round((r + g + b) / 3 / 255)] += 1
 					if colorValue[0] > colorValue[1]:
 						self.Maze.numbers[mazeY][mazeX] = 0
